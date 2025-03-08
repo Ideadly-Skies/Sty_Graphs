@@ -20,7 +20,6 @@ def has_path(graph, src, dst):
     # the stack does not contain the dst element
     return False
 
-
 if __name__ == "__main__":
     graph = {
         'f': ['g', 'i'],
