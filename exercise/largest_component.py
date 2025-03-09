@@ -1,7 +1,8 @@
 def largest_component(graph):
     visited = set() 
     largest = 0 
-    
+
+    # DFS traversal 
     for node in graph:
         size = explore_size(graph, node, visited)
         largest = max(largest, size)
