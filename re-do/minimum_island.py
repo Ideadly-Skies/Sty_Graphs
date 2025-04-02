@@ -1,38 +1,47 @@
-from collections import deque
-
 def minimum_island(grid):
-    visited = set()
-    min_size = float('inf')  # Set min_size to a very large value initially
-
+    min_island_size = float("inf")
+     
     for r in range(len(grid)):
-        for c in range(len(grid[0])):
-            # Only start BFS if the current cell is land ('L') and not visited
-            if grid[r][c] == 'L' and (r, c) not in visited:
-                min_size = min(BFS(grid, r, c, visited), min_size)
-
-    # Return the minimum size of the island
-    return min_size if min_size != float('inf') else 0
-
-def BFS(grid, r, c, visited: set):
-    # Initialize the queue with the starting tile
-    queue = deque([(r, c)])
+        for c in range(len(grid[r])):
+            size = DFS(grid, r, c)
+            if size:
+                min_island_size = min(size, min_island_size)
+    
+    return min_island_size 
+             
+def DFS(grid, r, c, visited=set()):
+    # boundary checking 
+    if r < 0 or r >= len(grid):
+        return 0
+    if c < 0 or c >= len(grid[r]):
+        return 0
+    
+    # edge case checking 
+    if grid[r][c] == "W":
+        return 0
+    
+    # update visited set 
+    if (r, c) in visited:
+        return 0
     visited.add((r, c))
-    size = 1  # Start with size 1 for the initial tile
+    
+    # recursive case
+    up_count = DFS(grid, r, c+1, visited)
+    down_count = DFS(grid, r, c-1, visited)
+    left_count = DFS(grid, r-1, c, visited)
+    right_count = DFS(grid, r+1, c, visited)
+    
+    # count number of land tiles (including this one)
+    return 1 + up_count + down_count + left_count + right_count
 
-    # BFS algorithm to explore the island
-    while queue:
-        # Pop from the queue
-        current_r, current_c = queue.popleft()
+if __name__ == "__main__":
+    grid = [
+        ['W', 'L', 'W', 'W', 'W'],
+        ['W', 'L', 'W', 'W', 'W'],
+        ['W', 'W', 'W', 'L', 'W'],
+        ['W', 'W', 'L', 'L', 'W'],
+        ['L', 'W', 'W', 'L', 'L'],
+        ['L', 'L', 'W', 'W', 'W'],
+    ]
 
-        # Check for 4 possible directions (up, down, left, right)
-        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            new_r, new_c = current_r + dr, current_c + dc
-
-            # Only process valid and unvisited land tiles ('L')
-            if 0 <= new_r < len(grid) and 0 <= new_c < len(grid[0]) and grid[new_r][new_c] == 'L' and (new_r, new_c) not in visited:
-                visited.add((new_r, new_c))
-                queue.append((new_r, new_c))
-                size += 1
-
-    # Return the size of the island
-    return size
+    print(minimum_island(grid)) # -> 2

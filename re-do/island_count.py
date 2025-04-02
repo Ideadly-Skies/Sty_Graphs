@@ -1,42 +1,37 @@
 def island_count(grid):
-    visited = set()
-
-    # island count
-    count = 0
-
-    # iterate through the loop O(n^2)
+    count = 0; 
+    
     for r in range(len(grid)):
-        for c in range(len(grid[0])):
-            if count_island(grid, r, c, visited):
-                count += 1
-
-    # return island_count
-    return count 
-    
-# count island starting from a node
-def count_island(grid, r, c, visited: set):
-    # check if node is out of bound
+        for c in range(len(grid[r])):
+            count += DFS(grid, r, c)
+            
+    return count
+     
+def DFS(grid, r: int, c: int, visited=set()):
+    # check if row and col out of bounds 
     if r < 0 or r >= len(grid):
-        return False
+        return 0 
     if c < 0 or c >= len(grid[0]):
-        return False
-
-    # check if node is visited
-    if (r, c) in visited or grid[r][c] == 'W':
-        return False
+        return 0     
     
-    # add node to visited
-    visited.add((r, c))
+    # check if (r, c) in visited
+    if grid[r][c] == "W": 
+        return 0 
+    
+    # check if pos in visited 
+    if (r, c) in visited:
+        return 0 
+    visited.add((r,c)) 
+    
+    # recursive case 
+    DFS(grid, r-1, c, visited)
+    DFS(grid, r+1, c, visited)
+    DFS(grid, r, c+1, visited)
+    DFS(grid, r, c-1, visited)  
 
-    # recursive case visit left right up and down
-    count_island(grid, r-1, c, visited)
-    count_island(grid, r+1, c, visited)
-    count_island(grid, r, c-1, visited)
-    count_island(grid, r, c+1, visited)
-
-    # island visited!
-    return True
-
+    # one whole island traversed
+    return 1
+    
 if __name__ == "__main__":
     grid = [
         ['W', 'L', 'W', 'W', 'W'],

@@ -1,45 +1,36 @@
-def undirected_path(edges, node_A, node_B, visited=set()):
-    # print the value of the current node
-    print(node_A)
+def undirected_path(edges, node_A, node_B):
+    graph = build_graph(edges)
     
-    # derive graph from create_graph function 
-    graph = create_graph(edges)
-
-    # no point visiting this node again
+    return _undirected_graph(graph, node_A, node_B, visited=set()) 
+     
+def _undirected_graph(graph, node_A, node_B, visited=set()):
     if node_A in visited:
-        return False 
-
-    # check if node_A (curr node) is equal to node_B
+        return
+    
+    visited.add(node_A) 
+     
     if node_A == node_B:
         return True
-
-    # add node to visited list
-    visited.add(node_A)
     
-    # recursive case 
     for neighbor in graph[node_A]:
-        if undirected_path(edges, neighbor, node_B, visited):
-            return True          
-    
-    # no such path exists between node_A and node_B
-    return False
+        if _undirected_graph(graph, neighbor, node_B, visited):
+            return True
         
-def create_graph(edges):
-    # adjacency list structure
-    adjacency_list = {} 
+    return False 
+
+def build_graph(edges):
+    graph = {} 
     
     for edge in edges:
-        a, b  = edge
-
-        if a not in adjacency_list:
-            adjacency_list[a] = []
-        if b not in adjacency_list:
-            adjacency_list[b] = []
+        node1, node2 = edge 
+        if node1 not in graph:
+            graph[node1] = []
+        if node2 not in graph:
+            graph[node2] = [] 
+        graph[node1].append(node2)
+        graph[node2].append(node1)
         
-        adjacency_list[a].append(b)
-        adjacency_list[b].append(a)
-
-    return adjacency_list
+    return graph
 
 if __name__ == "__main__":
     edges = [
@@ -50,7 +41,34 @@ if __name__ == "__main__":
         ('o', 'n')
     ]
 
-    # return adjacency list
-    print(create_graph(edges))
-
     print(undirected_path(edges, 'j', 'm')) # -> True
+    
+    edges = [
+        ('i', 'j'),
+        ('k', 'i'),
+        ('m', 'k'),
+        ('k', 'l'),
+        ('o', 'n')
+    ]
+
+    print(undirected_path(edges, 'm', 'j')) # -> True
+    
+    edges = [
+        ('i', 'j'),
+        ('k', 'i'),
+        ('m', 'k'),
+        ('k', 'l'),
+        ('o', 'n')
+    ]
+
+    print(undirected_path(edges, 'l', 'j')) # -> True
+    
+    edges = [
+        ('i', 'j'),
+        ('k', 'i'),
+        ('m', 'k'),
+        ('k', 'l'),
+        ('o', 'n')
+    ]
+
+    print(undirected_path(edges, 'k', 'o')) # -> False
